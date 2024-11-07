@@ -1,0 +1,251 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <limits>
+#include <utility>
+#include <cctype>
+#include <cstdlib>
+
+using namespace std;
+
+class QuizGame {
+public:
+	void start() {
+		int choice;
+		do {
+			clearScreen();
+
+			cout << "\033[0;32m";
+			cout << "                       ===================================\n";
+			cout << "                       ||                               ||\n";
+			cout << "                             Welcome to the Quiz Game!    \n";
+			cout << "                       ||                               ||\n";
+			cout << "                       ===================================\n";
+			cout << endl;
+
+			cout << "                             Choose a level to play\n";
+
+			cout << " \n\n  1. Easy ";
+			cout << " \n  ==========   \n";
+			cout << "                   2. Average ";
+			cout << " \n                   ==========   \n";
+			cout << "                                    3. Difficult ";
+			cout << " \n                                      ==========   \n";
+			cout << "                                                       4. Exit   ";
+			cout << " \n                                                      ==========   \n\n";
+
+			cout << " Enter your choice (1-4): ";
+			cout << "\033[0m";
+			cin >> choice;
+
+			if (cin.fail() || choice < 1 || choice > 4) {
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+				continue;
+			}
+
+			if (choice == 4) {
+				cout << "\033[38;5;214m\033[0m\n";
+				cout << "Thank you for playing!\n";
+				break;
+			}
+
+			clearScreen();
+			announceLevel(choice);
+			int score = playQuiz(choice);
+			displayResult(score);
+			cout << "\n";
+
+			char playAgain;
+			cout << "\033[0;32m";
+			cout << "Want to play again? (a. yes, b. no): ";
+			cout << "\033[0m";
+			cin >> playAgain;
+
+			while (true) {
+				if (playAgain == 'a' || playAgain == 'A') {
+					break;
+				}
+				else if (playAgain == 'b' || playAgain == 'B') {
+					cout << "Thank you for playing!\n";
+					return;
+				}
+				else {
+					cout << "Invalid choice. Please enter 'a' for yes or 'b' for no: \n";
+					cin >> playAgain;
+				}
+			}
+
+		} while (true);
+	}
+
+private:
+	void clearScreen() {
+#if defined(_WIN32) || defined(_WIN64)
+		system("cls");
+#else
+		system("clear");
+#endif
+	}
+
+	void announceLevel(int level) {
+		cout << "\033[0;33m";
+		switch (level) {
+		case 1:
+			cout << "\n               ===================================\n";
+			cout << "                  You're playing the Easy level!";
+			cout << "\n               ===================================\n\n";
+			break;
+		case 2:
+			cout << " \n               ===================================\n";
+			cout << "                  You're playing the Average level!";
+			cout << " \n               ===================================\n\n";
+			break;
+		case 3:
+			cout << " \n              ===================================\n";
+			cout << "                You're playing the Difficult level!";
+			cout << " \n              ===================================\n\n";
+			break;
+		default:
+			break;
+		}
+		cout << "\033[0m";
+	}
+
+	int playQuiz(int level) {
+		int score = 0;
+		vector<pair<string, pair<vector<string>, int>>> questions;
+
+		if (level == 1) {
+			questions = {
+				{	"1. Which of the following is a characteristic of a stack?",
+					{{"A) First In, First Out (FIFO)", "B) Last In, First Out (LIFO)", "C) Random Access", "D) None of the above"}, 1}
+				},
+				{	"2. What operation removes an item from a stack?",
+					{{"A) Enqueue", "B) Dequeue", "C) Push", "D) Pop"}, 3}
+				},
+				{	"3. In which data structure is the last item added the first one to be removed?",
+					{{"A) Queue", "B) Stack", "C) Array", "D) Linked List"}, 1}
+				},
+				{	"4. Which operation adds an item to the top of a stack?",
+					{{"A) Enqueue", "B) Push", "C) Pop", "D) Peek"}, 1}
+				},
+				{	"5. What type of data structure is a queue?",
+					{{"A) Last In, First Out (LIFO)", "B) First In, First Out (FIFO)", "C) Priority Based", "D) None of the above"}, 1}
+				}
+			};
+		}
+		else if (level == 2) {
+			questions = {
+				{	"1. Which of the following scenarios is best suited for using a stack?",
+					{{"A) Task scheduling", "B) Undo functionality in applications", "C) Browser history", "D) All of the above"}, 3}
+				},
+				{	"2. In a queue, which operation retrieves the first element without removing it?",
+					{{"A) Pop", "B) Dequeue", "C) Peek", "D) Push"}, 2}
+				},
+				{	"3. What is the time complexity of pushing an element onto a stack?",
+					{{"A) O(n)", "B) O(1)", "C) O(log n)", "D) O(n^2)"}, 1}
+				},
+				{	"4. Which of the following can be implemented using two stacks?",
+					{{"A) Queue", "B) Array", "C) Linked List", "D) Hash Table"}, 0}
+				},
+				{	"5. What is the result of performing a pop operation on an empty stack?",
+					{{"A) Null", "B) Error", "C) Zero", "D) None of the above"}, 1}
+				}
+			};
+		}
+		else if (level == 3) {
+			questions = {
+				{	"1. What is the maximum number of elements that can be stored in a stack of size N, if each element occupies 1 unit of space?",
+					{{"A) N", "B) N-1", "C) 2N", "D) Depends on the implementation"}, 0}
+				},
+				{	"2. In a circular queue implemented using arrays, how do you determine if the queue is full?",
+					{{"A) Front equals rear", "B) Rear + 1 equals front", "C) Front is at the last index", "D) Count of elements equals size"}, 1}
+				},
+				{	"3. Consider a situation where you need to reverse a string using a stack. Which algorithmic complexity do you expect?",
+					{{"A) O(n)", "B) O(n^2)", "C) O(log n)", "D) O(1)"}, 0}
+				},
+				{	"4. Which of the following can cause a stack overflow?",
+					{{"A) Popping from an empty stack", "B) Using a queue", "C) Pushing elements beyond the maximum stack size", "D) None of the above"}, 2}
+				},
+				{	"5. If you have a stack containing the elements {1, 2, 3, 4, 5} (top to bottom), what will be the order of elements after popping three times?",
+					{{"A) {1, 2}", "B) {2, 3, 4, 5}", "C) {1, 2, 3}", "D) {3, 4, 5}"}, 0}
+				}
+			};
+		}
+
+		for (const auto& q : questions) {
+			cout << "\033[0;34m";
+			cout << q.first << "\n";
+			cout << "\033[0m";
+			for (const auto& option : q.second.first) {
+				cout << "\033[0;32m";
+				cout << option << "\n";
+				cout << "\033[0m";
+			}
+
+			char chosenOption = ' ';
+			while (true) {
+				cout << "\033[0;33m";
+				cout << "\nEnter the letter of your answer (A-" << char('A' + q.second.first.size() - 1) << "): ";
+				cout << "\033[0m";
+				cin >> chosenOption;
+
+				chosenOption = toupper(chosenOption);
+
+				if (chosenOption < 'A' || chosenOption >= 'A' + q.second.first.size()) {
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					cout << "\nInvalid choice. Please enter a letter between A and \n" << char('A' + q.second.first.size() - 1) << ".\n";
+				}
+				else {
+					break;
+				}
+			}
+
+			if (chosenOption - 'A' == q.second.second) {
+				cout << "\n\033[38;5;214mCorrect!\033[0m\n\n";
+				score++;
+			}
+			else {
+				cout << "\n\033[0;31mIncorrect! The correct answer was: " << q.second.first[q.second.second] << "\033[0m\n";
+			}
+		}
+		return score;
+	}
+
+	void displayResult(int score) {
+		cout << "\033[0;32m";
+		cout << "\nYour score: " << score << " out of 5. \n";
+		cout << "\033[0m";
+		switch (score) {
+		case 5:
+			cout << "\n\033[38;5;214mYou're perfect! You aced it!\033[0m\n";
+			break;
+		case 4:
+			cout << "\n\033[38;5;214mAlmost perfect! Well done!\033[0m\n";
+			break;
+		case 3:
+			cout << "\n\033[38;5;214mNot bad! You got a decent score.\033[0m\n";
+			break;
+		case 2:
+			cout << "\n\033[0;33mYou need to study more.\033[0m\n";
+			break;
+		case 1:
+			cout << "\n\033[0;33mYou need more practice.\033[0m\n";
+			break;
+		case 0:
+			cout << "\n\033[0;31mYour IQ is too low for this quiz!\033[0m\n";
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+int main() {
+	QuizGame game;
+	game.start();
+	return 0;
+}
