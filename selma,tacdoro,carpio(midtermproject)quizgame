@@ -1,0 +1,319 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>//provides general utility functions, including functions for memory allocation, random number generation, and converting data types.
+#include <ctime>//provides functions for working with time and dates.
+#include <queue>
+#include <conio.h>//console input/output
+
+using namespace std;
+
+// Node structure for linked list
+struct Node {
+    int data;
+    Node* next;
+
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+// Linked List class
+class LinkedList {
+public:
+    Node* head;
+
+    LinkedList() : head(nullptr) {}
+
+    void append(int data) {
+        Node* newNode = new Node(data);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+        Node* current = head;
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+
+    void printList() {
+        Node* current = head;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+};
+
+// Function to clear screen (cross-platform)
+void cls() {
+#ifdef _WIN32
+    system("cls");  // Windows
+#else
+    system("clear");  // Linux/Mac
+#endif
+}
+
+// Function declarations
+void quizGame();
+void displayEndGameOptions();
+void displayIntro();
+void displayQuestion(int questionNumber, const string& question, const string options[]);
+char getAnswer();
+void handleIntroChoice(char choice);
+void displayCertificate(const string& userName);
+void levelTwoQuiz(const string& userName);
+bool askToContinue(const string& userName);
+
+// Function to display intro menu
+void displayIntro() {
+    cout << "           Quiz Game!" << endl;
+    cout << "--------------------------------" << endl;
+    cout << "Menu:" << endl;
+    cout << "A. Play" << endl;
+    cout << "B. Exit" << endl;
+    cout << "Choose an option: ";
+}
+
+// Function to display quiz questions and options
+void displayQuestion(int questionNumber, const string& question, const string options[]) {
+    cout << questionNumber << ". " << question << endl << endl;
+    for (int i = 0; i < 3; ++i) {
+        cout << char('A' + i) << ". " << options[i] << endl;
+    }
+}
+
+// Function to get user input for answer
+char getAnswer() {
+    char answer;
+    while (true) {
+        cout << "\nEnter your answer (A-C): ";
+        cin >> answer;
+        answer = toupper(answer); // Ensure the answer is uppercase
+
+        if (answer >= 'A' && answer <= 'C') {
+            return answer;  // Valid answer
+        }
+        else {
+            cout << "Invalid answer! Please enter A, B, or C." << endl;
+        }
+    }
+}
+
+// Function to display the end game options and handle user choice
+void displayEndGameOptions() {
+    char choice;
+    cout << "\nWould you like to:" << endl;
+    cout << "A. Play Again" << endl;
+    cout << "B. Exit" << endl;
+    cout << "Choose an option: ";
+    cin >> choice;
+    choice = toupper(choice);
+
+    switch (choice) {
+    case 'A':
+        quizGame(); // Restart the quiz
+        break;
+    case 'B':
+        cout << "\nExiting game. Goodbye!" << endl;
+        exit(0);
+    default:
+        cout << "\nInvalid choice. Please choose again." << endl;
+        displayEndGameOptions(); // Retry the choice
+    }
+}
+
+// Function to display the certificate in level two
+void displayCertificate(const string& userName) {
+    cout << "\n*********************************\n";
+    cout << "         Certificate of          \n";
+    cout << "        Participation               \n";
+    cout << "*********************************\n";
+    cout << "This certifies that " << userName << "\n";
+    cout << "has successfully passed the \n";
+    cout << "Data Structures Quiz Game!\n";
+    cout << "*********************************\n";
+}
+
+// Function to run the first level quiz game
+void quizGame() {
+    string userName;
+    cout << "Enter your name: ";
+    cin >> userName;
+
+    cout << "\nWelcome to the Data Structures Quiz Game, " << userName << "!" << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "  You will be presented with 10 questions" << endl;
+    cout << "Choose the correct answer for each question" << endl;
+    cout << "                Good luck!!" << endl << endl;
+    _getch();
+
+    int score = 0;
+    const int totalQuestions = 10; // Total questions
+    const int passingScore = 6; // Define passing score
+
+    string questions[10] = {
+        "Which data structure allows efficient insertion and deletion at both the beginning and end?",
+        "It implement recursion to traverse nodes, which can be elegant but less efficient in terms of memory due to call stack usage?",
+        "It is a linear data structure that follows the Last-In-First-Out (LIFO) principle?",
+        "It is a linear data structure that follows the First-In-First-Out (FIFO) principle?",
+        "Which data structure is best suited for representing a line of people waiting at a counter?",
+        "This operation adds an element to the top of the stack?",
+        "This operation removes the top element from the stack and returns it?",
+        "This operation returns the top element of the stack without removing it?",
+        "Think of a scenario where a line of people waiting for a bus. The person who arrives first gets on the bus first. This is an example of?",
+        "Which data structure is used to store elements in a specific order?"
+    };
+
+    string options[10][3] = {
+        {"Linked List", "Stack", "Queue"},
+        {"Recursive", "Iterative", "Queue"},
+        {"Linked List", "Stack", "Queue"},
+        {"Linked List", "Stack", "Queue"},
+        {"Linked List", "Stack", "Queue"},
+        {"Push", "Peek", "Pop"},
+        {"Push", "Pop", "Peek"},
+        {"Pop", "Peek", "Push"},
+        {"Linked List", "Stack", "Queue"},
+        {"Linked List", "Stack", "Queue"},
+    };
+
+    char correctAnswers[10] = { 'A', 'A', 'B', 'C', 'C', 'A', 'B', 'B', 'C', 'C' };
+
+    for (int i = 0; i < totalQuestions; ++i) {
+        cls(); // Clear screen before displaying each question
+        displayQuestion(i + 1, questions[i], options[i]);
+        char answer = getAnswer(); // Get a valid answer
+        if (answer == correctAnswers[i]) {
+            cout << "Question " << (i + 1) << ": Your answer: " << answer << " - Correct!" << endl;
+            score++;
+        }
+        else {
+            cout << "Question " << (i + 1) << ": Your answer: " << answer << " - Incorrect. The correct answer is " << correctAnswers[i] << "." << endl;
+        }
+        _getch();
+        cout << endl;
+    }
+
+
+    // Calculate percentage
+    double percentage = (static_cast<double>(score) / totalQuestions) * 100;
+    cout << "\nYou got " << score << " out of " << totalQuestions << " questions correct!" << endl;
+    cout << "You answered " << percentage << "% of the quiz correctly" << endl;
+
+    // Display passing score information if passed
+    if (score >= passingScore) {
+        cout << "\nCongratulations, " << userName << "! You passed the quiz!" << endl;
+
+        // Ask if the user wants to continue to level two
+        if (askToContinue(userName)) {
+            levelTwoQuiz(userName); // Move to level two
+        }
+    }
+    else {
+        cout << "Unfortunately, " << userName << ", you did not pass." << endl;
+    }
+
+    // Display end game options
+    displayEndGameOptions();
+}
+
+// Function to run the second level quiz game
+void levelTwoQuiz(const string& userName) {
+    cout << "\nWelcome to Level 2 of the Data Structures Quiz, " << userName << "!" << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "  You will be presented with 5 more questions" << endl;
+    cout << "Choose the correct answer for each question" << endl;
+    cout << "                Good luck!!" << endl << endl;
+    _getch();
+
+    int score = 0;
+    const int totalQuestions = 5; // Total questions for level 2
+    const int passingScore = 3; // Define passing score for level 2
+
+    string questions[5] = {
+        "It is a linear data structure where each element (node) points to the next?",
+        "Each node points to the next node, with the last node pointing to NULL?",
+        "Each node has two pointers: one pointing to the next node and one pointing to the previous node?",
+        "The last node points back to the first node, forming a circular loop?",
+        "It uses a loop to visit each node from the head to the end?"
+    };
+
+    string options[5][3] = {
+        {"Stack", "Linked List", "Queue"},
+        {"Linked List", "Doubly Linked List", "Singly Linked List"},
+        {"Doubly Linked List", "Circular Linked List", "Singly Linked List"},
+        {"Circular Linked List", "Linked List", "Doubly Linked List"},
+        {"Recursive", "Iterative", "Linked List"},
+    };
+
+    char correctAnswers[5] = { 'B', 'C', 'A', 'A', 'B' };
+
+    for (int i = 0; i < totalQuestions; ++i) {
+        cls(); // Clear screen before displaying each question
+        displayQuestion(i + 1, questions[i], options[i]);
+        char answer = getAnswer(); // Get a valid answer
+        if (answer == correctAnswers[i]) {
+            cout << "Question " << (i + 1) << ": Your answer: " << answer << " - Correct!" << endl;
+            score++;
+        }
+        else {
+            cout << "Question " << (i + 1) << ": Your answer: " << answer << " - Incorrect. The correct answer is " << correctAnswers[i] << "." << endl;
+        }
+        _getch();
+        cout << endl;
+    }
+
+
+    // Calculate percentage for level 2
+    double percentage = (static_cast<double>(score) / totalQuestions) * 100;
+    cout << "\nYou got " << score << " out of " << totalQuestions << " questions correct in Level 2!" << endl;
+    cout << "You answered " << percentage << "% of the quiz correctly" << endl;
+
+    // Display passing score information and certificate if passed
+    if (score >= passingScore) {
+        cout << "\nCongratulations, " << userName << "! You passed Level 2!" << endl;
+        displayCertificate(userName);
+    }
+    else {
+        cout << "Unfortunately, " << userName << ", you did not pass Level 2." << endl;
+    }
+
+    // Display end game options
+    displayEndGameOptions();
+}
+
+// Function to ask if the user wants to continue to the next level
+bool askToContinue(const string& userName) {
+    char choice;
+    cout << "\n" << userName << ", do you want to continue to Level 2? (Y/N): ";
+    cin >> choice;
+    return toupper(choice) == 'Y';
+}
+
+// Function to handle intro menu choice
+void handleIntroChoice(char choice) {
+    switch (choice) {
+    case 'A':
+    case 'a':
+        quizGame();
+        break;
+    case 'B':
+    case 'b':
+        cout << "\nExiting game. \nGoodbye!" << endl;
+        exit(0);
+    default:
+        cout << "\nInvalid choice. Please choose again.\n" << endl;
+        break; // Just return to the main loop
+    }
+}
+
+int main() {
+    char choice;
+    do {
+        displayIntro();
+        cin >> choice;
+        handleIntroChoice(choice);
+    } while (choice != 'C' && choice != 'c'); // Loop until user chooses to exit
+    return 0;
+}
