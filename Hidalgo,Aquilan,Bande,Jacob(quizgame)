@@ -1,0 +1,226 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <limits>
+#include <cctype>
+#include <thread> // Include thread library for sleep
+
+using namespace std;
+
+// ANSI escape codes for colors
+const string RED = "\033[31m";       // Red text
+const string GREEN = "\033[32m";     // Green text
+const string YELLOW = "\033[33m";    // Yellow text
+const string BLUE = "\033[34m";      // Blue text
+const string MAGENTA = "\033[35m";   // Magenta text
+const string CYAN = "\033[36m";      // Cyan text
+const string RESET = "\033[0m";      // Reset to default color
+
+// Function to clear the console screen
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+// Function to display a welcome message
+void displayWelcomeMessage() {
+    cout << CYAN << endl;
+    cout << "\n\n\n\t\t\t\t   _      _   _  | |   _    _    _ _ __     _  " << endl;
+    cout << "\t\t\t\t   \\ \\ /\\ / /  / _ \\ | |  / _|  / _ \\  | '  _ \\   / _ \\ " << endl;
+    cout << "\t\t\t\t    \\ V  V /  |  _/ | | | (_  | (_) | | | | | | | |  __/ " << endl;
+    cout << "\t\t\t\t     \\_/\\_/    \\___| |_|  \\___|  \\___/  |_| |_| |_|  \\___| " << endl;
+}
+
+// Function to display a question
+void displayQuestion(const string& question) {
+    cout << BLUE << "\n\t" << question << RESET << "\n\n";
+}
+
+// Function to display the options for a question
+void displayOptions(const vector<string>& options) {
+    cout << YELLOW;
+    for (size_t i = 0; i < options.size(); i++) {
+        cout << "\t" << char('A' + i) << ". " << options[i] << endl;
+    }
+    cout << RESET; // Reset to default color after options
+}
+
+// Function to get the player's answer
+char getAnswer() {
+    char answer;
+    cout << GREEN << "\n\tEnter your answer (A-D): " << RESET;
+    cin >> answer;
+    answer = toupper(answer);
+
+    // Check if the input is valid
+    while (cin.fail() || (answer < 'A' || answer > 'D')) {
+        cin.clear(); // Clear the error flag on cin
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cout << RED << "\tInvalid input! Please enter A, B, C, or D: " << RESET;
+        cin >> answer;
+        answer = toupper(answer);
+    }
+    return answer;
+}
+
+// Function to check the answer and update the score
+bool checkAnswer(char answer, char correctAnswer, int& score) {
+    if (answer == correctAnswer) {
+        cout << GREEN << "\n\tCorrect!" << RESET << "\n";
+        score += 10; // Award 10 points for a correct answer
+    }
+    else {
+        cout << RED << "\n\tIncorrect! The correct answer is " << correctAnswer << "." << RESET << "\n";
+    }
+    this_thread::sleep_for(chrono::seconds(2)); // Pause for 2 seconds to display the result
+    return answer == correctAnswer;
+}
+
+// Function to display the final score
+void displayScore(const string& playerName, int score) {
+
+
+    cout << RED << endl;
+
+    cout << RED << endl;
+    cout << "  ___                 _ _   " << endl;
+
+    cout << " |  __ \\               | | |  " << endl;
+
+    cout << " | |__) |___  _ _   | | | " << endl;
+
+    cout << " |  _  // _ \\/ __| | | | | __|" << endl;
+
+    cout << " | | \\ \\  _/\\_ \\ |_| | | |_ " << endl;
+
+    cout << " |_|  \\_\\___||___/\\__,_|_|\\__|" << endl;
+
+
+    cout << YELLOW << endl;
+    cout << "                     ,---.           ,---.   " << endl;
+
+    cout << "                    / /^.\\.--''''-./,'^\\ \\	" << endl;
+
+    cout << "                    \\ \\    _       _    / /	" << endl;
+
+    cout << "                     ./  / _   _ \\  \\,'	" << endl;
+
+    cout << "                      /    /_O)_(_O\\    \\	" << endl;
+
+    cout << "                      |  .-'  _  -.  |	" << endl;
+
+    cout << "                   .--|       \\_/       |--.	" << endl;
+
+    cout << "                 ,'    \\   \\   |   /   /    ." << endl;
+
+    cout << "                /       .  --^--'  ,'       \\" << endl;
+
+    cout << "             .-^^^^^-.    --.___.--'     .-^^^^^-." << endl;
+
+    cout << ".-----------/         \\------------------/         \\--------------." << endl;
+
+    cout << "| .---------\\         /----------------- \\         /------------. |" << endl;
+
+    cout << "| |          -----'                    --'--'-'             | |" << endl;
+
+    cout << "| |                                                             | |" << endl;
+
+    cout << "| |                                                             | |" << endl;
+    cout << "\n\tCongratulations, " << playerName << "! Your final score is: " << score << endl;
+    cout << "| |                                                             | |" << endl;
+
+    cout << "| |                                                             | |" << endl;
+
+    cout << "| |_____________________________________________________________| |" << endl;
+
+    cout << "|_________________________________________________________________|" << endl;
+
+    cout << "                   )__________|__|__________(" << endl;
+
+    cout << "                  |            ||            |" << endl;
+
+    cout << "                  |____________||____________|" << endl;
+
+    cout << "                    ),-----.(      ),-----.(" << endl;
+
+    cout << "                  ,'   ==.   \\    /  .==    ." << endl;
+
+    cout << "                 /            )  (            \\" << endl;
+
+    cout << "                 ==========='    ==========='  " << endl;
+}
+
+
+int main() {
+    clearScreen();
+    displayWelcomeMessage();
+
+    string playerName;
+    cout << "\tEnter your name: ";
+    getline(cin, playerName);
+
+    // Questions and answers
+    vector<string> questions = {
+        "What is the main function of a stack?",
+        "What is the order of elements in a stack?",
+        "What operation removes the top element of a stack?",
+        "What operation adds an element to the top of a stack?",
+        "Which data structure follows the LIFO principle?",
+        "What happens when you pop from an empty stack?",
+        "What does 'peek' do in a stack?"
+    };
+
+    vector<vector<string>> options = {
+        {"Add elements at the end", "Remove elements from the end", "Add and remove elements from the top", "None of the above"},
+        {"FIFO", "LIFO", "Random order", "None of the above"},
+        {"Push", "Pop", "Peek", "None of the above"},
+        {"Pop", "Push", "Peek", "None of the above"},
+        {"Queue", "Stack", "Linked List", "Tree"},
+        {"Error", "Return 0", "Return null", "None of the above"},
+        {"Returns the top element", "Removes the top element", "Checks if stack is empty", "None of the above"}
+    };
+
+    vector<char> correctAnswers = { 'C', 'B', 'B', 'B', 'A', 'A', 'A' };
+
+    int score = 0;
+    stack<int> questionStack;
+
+    // Push all question indices onto the stack
+    for (int i = 0; i < questions.size(); i++) {
+        questionStack.push(i);
+    }
+
+    // Play the game
+    while (!questionStack.empty()) {
+        int questionIndex = questionStack.top();
+        questionStack.pop();
+
+        clearScreen();
+        displayQuestion(questions[questionIndex]);
+        displayOptions(options[questionIndex]);
+
+        auto start = chrono::steady_clock::now(); // Start timer
+        char answer = getAnswer();
+        auto end = chrono::steady_clock::now(); // End timer
+
+        // Check if the answer was given within 60 seconds
+        chrono::duration<double> elapsed_seconds = end - start;
+        if (elapsed_seconds.count() > 60) {
+            cout << RED << "\n\tTime's up! You took too long to answer." << RESET << "\n";
+            continue; // Skip to next question
+        }
+
+        // Check the answer
+        checkAnswer(answer, correctAnswers[questionIndex], score);
+    }
+
+    clearScreen();
+    displayScore(playerName, score);
+
+    return 0;
+}
